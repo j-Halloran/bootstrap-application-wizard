@@ -2,10 +2,11 @@ $(document).ready(function() {
   $.fn.wizard.logging = true;
   var wizard = $('#satellite-wizard').wizard({
     keyboard : false,
-    contentHeight : 400,
-    contentWidth : 700,
+    contentHeight : 700,
+    contentWidth : 800,
     backdrop: 'static'
   });
+  wizard.show();
 
   $(".chzn-select").chosen();
 
@@ -21,42 +22,6 @@ $(document).ready(function() {
   var pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
   x = 46;
 
-  $('#ip').on('input', function() {
-    if ($(this).val().length != 0) {
-      $('#fqdn').val('').attr('disabled', 'disabled');
-    } else {
-      $('#fqdn').val('').removeAttr('disabled');
-    }
-  }).keypress(function(e) {
-    if (e.which != 8 && e.which != 0 && e.which != x && (e.which < 48 || e.which > 57)) {
-      console.log(e.which);
-      return false;
-    }
-  }).keyup(function() {
-    var $this = $(this);
-    if (!pattern.test($this.val())) {
-      //$('#validate_ip').text('Not Valid IP');
-      console.log('Not Valid IP');
-      $this.parents('.form-group').removeClass('has-error has-success').addClass('has-error');
-      while ($this.val().indexOf("..") !== -1) {
-        $this.val($this.val().replace('..', '.'));
-      }
-      x = 46;
-    } else {
-      x = 0;
-      var lastChar = $this.val().substr($this.val().length - 1);
-      if (lastChar == '.') {
-        $this.val($this.val().slice(0, -1));
-      }
-      var ip = $this.val().split('.');
-      if (ip.length == 4) {
-        //$('#validate_ip').text('Valid IP');
-        console.log('Valid IP');
-        $this.parents('.form-group').removeClass('has-error').addClass('has-success');
-      }
-    }
-  });
-
   wizard.on('closed', function() {
     wizard.reset();
   });
@@ -64,7 +29,6 @@ $(document).ready(function() {
   wizard.on("reset", function() {
     wizard.modal.find(':input').val('').removeAttr('disabled');
     wizard.modal.find('.form-group').removeClass('has-error').removeClass('has-succes');
-    wizard.modal.find('#fqdn').data('is-valid', 0).data('lookup', 0);
   });
 
   wizard.on("submit", function(wizard) {
@@ -114,7 +78,7 @@ function validateServerLabel(el) {
 
   if (name == "") {
     retValue.status = false;
-    retValue.msg = "Please enter a label";
+    retValue.msg = "Please enter an assignment name.";
   } else {
     retValue.status = true;
   }
@@ -122,33 +86,88 @@ function validateServerLabel(el) {
   return retValue;
 };
 
-function validateFQDN(el) {
-  var $this = $(el);
+function validateAssignmentType(el){
   var retValue = {};
 
-  if ($this.is(':disabled')) {
-    // FQDN Disabled
+  if(el.val()!=='N'){
     retValue.status = true;
-  } else {
-    if ($this.data('lookup') === 0) {
-      retValue.status = false;
-      retValue.msg = "Preform lookup first";
-    } else {
-      if ($this.data('is-valid') === 0) {
-        retValue.status = false;
-        retValue.msg = "Lookup Failed";
-      } else {
-        retValue.status = true;
-      }
-    }
+  }
+  else{
+    retValue.status = false;
+    retValue.msg = "Select an Assignment Type."
   }
 
   return retValue;
-};
+}
 
-function lookup() {
-  // Normally a ajax call to the server to preform a lookup
-  $('#fqdn').data('lookup', 1);
-  $('#fqdn').data('is-valid', 1);
-  $('#ip').val('127.0.0.1');
-};
+//Listener for is teacher graded only
+$('#teacherGradeOnly').change(function(){
+  if($('#teacherGradeOnly').val() === 'Y'){
+    $('#backEvalSelDiv').hide();
+    $('#backEvalSel').val("N");
+    $('#reviewDeadlineDiv').hide();
+    $('#backEvalDeadlineDiv').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(4)').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(5)').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(6)').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(7)').hide();
+  }
+  else{
+    $('#backEvalSelDiv').show();
+    $('#backEvalSel').val("Y");
+    $('#reviewDeadlineDiv').show();
+    $('#backEvalDeadlineDiv').show();
+    $('div.wizard-nav-container > ul > li:nth-child(4)').show();
+    $('div.wizard-nav-container > ul > li:nth-child(5)').show();
+    $('div.wizard-nav-container > ul > li:nth-child(6)').show();
+    $('div.wizard-nav-container > ul > li:nth-child(7)').show();
+  }
+});
+
+//Listener for assignment type
+$('#assignTypeSel').change(function(){
+  if($('#assignTypeSel').val()==='T'){
+    $('#submissionDeadlineDiv').hide();
+    $('#teacherGradeOnlyDiv').hide();
+    $('#subTypeSelDiv').hide();
+  }
+  else{
+    $('#submissionDeadlineDiv').show();
+    $('#teacherGradeOnlyDiv').show();
+    $('#subTypeSelDiv').show();
+  }
+});
+
+//listener for submission type
+$('#subTypeSel').change(function(){
+  if($('#subTypeSel').val()==='F'){
+    $('#convertDocsDiv').show();
+  }
+  else{
+    $('#convertDocsDiv').hide();
+  }
+});
+
+//listener for is backEvaled
+$('#backEvalSel').change(function(){
+  if($('#backEvalSel').val() === 'Y'){
+    $('#backEvalDeadlineDiv').show();
+    $('div.wizard-nav-container > ul > li:nth-child(5)').show();
+  }
+  else{
+    $('#backEvalDeadlineDiv').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(5)').hide();
+  }
+});
+
+//listener for reviewing style
+$('#reviewingStyle').change(function(){
+  if($('#reviewingStyle').val()==='S'){
+    $('#lateSubDocWindow').hide();
+    $('#lateSubDocPen').hide();
+  }
+  else{
+    $('#lateSubDocWindow').show();
+    $('#lateSubDocPen').show();
+  }
+});

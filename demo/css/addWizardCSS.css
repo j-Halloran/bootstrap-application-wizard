@@ -26,3 +26,11 @@
   margin-left: 15px;
   width: 90%;
 }
+.modal-dialog{
+  margin-top: 5% !important;
+}
+
+#publishDate,#submissionDeadline,#reviewDeadline,#backEvaluationDeadline{
+  width: 60%;
+  display: inline-block;
+}

@@ -3,10 +3,14 @@
 	<head>
 		<title>Peerceptiv: Assignment Creation Wizard</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=700">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link href="../src/bootstrap-wizard.css" rel="stylesheet" />
 		<link href="chosen/chosen.css" rel="stylesheet" />
 		<link href="css/addWizardCSS.css" rel="stylesheet" />
+		<link href="css/datepicker.css" rel="stylesheet" />
+		<!--Date Picker JS Library-->
+  	<script type="text/javascript" src="js/datepicker.js"></script>
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
@@ -14,242 +18,317 @@
 		<script src="js/respond-1.3.0.min.js"></script>
 		<![endif]-->
 	</head>
-	<body style="padding:30px;">
+	<body style="">
+		<!--WYSIWYG Editor JS needs to be here in order to be infront of the text areas sadly-->
+		<script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
 
-		<a class="btn" href="https://github.com/amoffat/bootstrap-application-wizard">Back to docs</a>
+		<a class="btn" href="https://github.com/j-halloran/bootstrap-application-wizard">Back to docs</a>
 		<button id="open-wizard" class="btn btn-primary">
 			Open wizard
 		</button>
 
 		<div class="wizard" id="satellite-wizard" data-title="Create New Assignment">
 
-			<!-- Step 1 Name & FQDN -->
+			<!-- Step 1 Name & description -->
 			<div class="wizard-card" data-cardname="name">
-				<h3>Name & Description</h3>
+				<h3>Name &amp; Description</h3>
 
-				<div class="wizard-input-section">
-					<div class="form-group">
-						<div class="col-sm-6">
-							<input type="text" class="form-control" id="label" name="label" placeholder="Assignment Name" data-validate="validateServerLabel">
-						</div>
-					</div>
+				<div class="wizard-input-section" id="labelDiv">
+					<p>Assignment Name</p>
+					<input type="text" class="form-control" id="label" name="shortDescription" placeholder="Assignment Name" data-validate="validateServerLabel">
 				</div>
 
 				<div class="wizard-input-section">
-					<p>
-						Full Qualified Domain Name
-					</p>
+					<p>Full Assignment Description</p>
 
-					<div class="form-group">
-						<div class="col-sm-8">
+					<div class="form-group" id="assignmentDescriptionDiv">
+						<div class="col-sm-8" style="width:100%">
 							<div class="input-group">
-								<input type="text" class="form-control" id="fqdn" name="fqdn" placeholder="FQDN" data-validate="validateFQDN" data-is-valid="0" data-lookup="0" />
-								<span class="input-group-btn" id="btn-fqdn">
-									<button class="btn btn-default" type="button" onclick='lookup();'>
-										Lookup
-									</button> </span>
+								<!--CKEDITOR WYSIWYG text area for ong description input-->
+								<textarea cols="50" rows="10" id="editor1" name="assignmentDescription"></textarea>
+								<script>
+									CKEDITOR.replace( 'editor1' , {extraPlugins: 'pastefromword'});
+								</script>
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<!--Step 2 Type Basic Options-->
+			<div class="wizard-card" data-cardname="type">
+				<h3>Assignment Type</h3>
 
 				<div class="wizard-input-section">
-					<p>
-						Server ip.
-					</p>
+					<p>Assignment Type</p>
+					<select name="assignmentType" id="assignTypeSel" data-placeholder="Select An Assignment Type" class="form-control" data-validate="validateAssignmentType">
+												<option value="N">Select An Assignment Type</option>
+												<option value="R" >Regular/Individual Submission</option>
+                        <option value="G">Group Submission</option>
+                        <option value="T">Training</option>
+          </select>
+				</div>
 
-					<div class="form-group">
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="ip" name="ip" placeholder="IP" data-serialize="1" />
-						</div>
-					</div>
+				<div class="wizard-input-section" id="subTypeSelDiv">
+					<p>Submission Type</p>
+					<select name="submissionType" id="subTypeSel"  data-placeholder="Select A Submission Type" class="form-control" data-validate="validateAssignmentType">
+												<option value="N">Select A Submission Type</option>
+												<option value="F">Upload A File</option>
+                        <option value="T">Plain Text Online</option>
+                        <option value="U">Submit A URL</option>
+          </select>
+			  </div>
+
+				<div class="wizard-input-section" id="teacherGradeOnlyDiv">
+					<p>Teacher Grading Only</p>
+					<select name="isTeacherOnlyGraded" id="teacherGradeOnly" data-placeholder="No" class="form-control">
+											<option value="N" selected>No</option>
+											<option value="Y">Yes</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section" id="anonTeacherGradesDiv">
+					<p>Anonymous Teacher Reviews</p>
+					<select name="anonTeacherGrades" id="anonTeacherGrades" data-placeholder="No" class="form-control">
+											<option value="N" selected>No</option>
+											<option value="Y">Yes</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section" id="backEvalSelDiv">
+					<p>Back Evaluate Assignment</p>
+					<select name="isBackEvaluated" id="backEvalSel" data-placeholder="Yes" class="form-control">
+											<option value="Y" selected>Yes</option>
+											<option value="N">No</option>
+          </select>
 				</div>
 			</div>
 
-			<div class="wizard-card" data-cardname="group">
-				<h3>Server Group</h3>
+			<!--Step 3 Deadlines-->
+			<div class="wizard-card" id="deadlineCard" data-cardname="deadlines">
+				<h3>Deadlines</h3>
 
-				<div class="wizard-input-section">
-					<p>
-						Where would you like server <strong class="create-server-name"></strong>
-						to go?
-					</p>
+				<div class="wizard-input-section" id="publishDateDiv">
+					<p>Assignment Publication Time</p>
+					<input type="text"  class="dateformat-m-sl-d-sl-Y form-control" id="publishDate" name="publishDate" placeholder="01/01/2017">
+				</div>
 
-					<img class="wizard-group-list" src="img/groups.png" />
+				<div class="wizard-input-section" id="submissionDeadlineDiv">
+					<p>Submission Deadline</p>
+					<input type="text"  class="dateformat-m-sl-d-sl-Y form-control" id="submissionDeadline" name="submissionDeadline" placeholder="01/02/2017">
+				</div>
+
+				<div class="wizard-input-section" id="reviewDeadlineDiv">
+					<p>Review Deadline</p>
+					<input type="text"  class="dateformat-m-sl-d-sl-Y form-control" id="reviewDeadline" name="reviewDeadline" placeholder="01/03/2017">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalDeadlineDiv">
+					<p>Back Evaluation Deadline</p>
+					<input type="text"  class="dateformat-m-sl-d-sl-Y form-control" id="backEvaluationDeadline" name="backEvaluationDeadline" placeholder="01/04/2017">
 				</div>
 			</div>
 
-			<div class="wizard-card wizard-card-overlay" data-cardname="services">
-				<h3>Service Selection</h3>
+			<!--Step 4 Review Options-->
+			<div class="wizard-card wizard-card-overlay" data-cardname="review">
+				<h3>Review Settings</h3>
 
-				<div class="alert hide">
-					It's recommended that you select at least one
-					service, like ping.
+				<div class="wizard-input-section" id="numReviewersDiv">
+					<p>Number of Reviewers</p>
+					<select name="numReviewers" id="numReviewers" data-placeholder="3" class="form-control">
+												<option value="1">1</option>
+												<option value="2" >2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+												<option value="5">5</option>
+          </select>
 				</div>
 
-				<div class="wizard-input-section">
-					<p>
-						Please choose the services you'd like Panopta to
-						monitor.  Any service you select will be given a default
-						check frequency of 1 minute.
-					</p>
+				<div class="wizard-input-section" id="reviewingStyleDiv" >
+					<p>Reviewing Style</p>
+					<select name="reviewingStyle" id="reviewingStyle" data-placeholder="Assigned One At A Time" class="form-control">
+												<option value="S">Assigned One At A Time</option>
+												<option value="P">Assigned All At Once</option>
+          </select>
+				</div>
 
-					<select name="services" data-placeholder="Service List" style="width:350px;" class="chzn-select create-server-service-list form-control" multiple>
+				<div class="wizard-input-section" id="teacherReviewDiv">
+					<p>Instructor's Review Is</p>
+					<select name="teacherReview" id="teacherReview" data-placeholder="Just One in the Set" class="form-control">
+												<option value="1" selected>Just One in the Set</option>
+												<option value="2">Sliding Scale</option>
+												<option value="3">Overrides All Student Reviews</option>
+          </select>
+				</div>
 
-						<option value=""></option>
-						<optgroup label="Basic">
-							<option selected value="icmp.ping">Ping</option>
-							<option selected value="tcp.ssh">SSH</option>
-							<option value="tcp.ftp">FTP</option>
-						</optgroup>
-						<optgroup label="Web">
-							<option selected value="tcp.http">HTTP</option>
-							<option value="tcp.https">HTTP (Secure)</option>
-							<option value="tcp.dns">DNS</option>
-						</optgroup>
-						<optgroup label="Email">
-							<option value="tcp.pop">POP</option>
-							<option value="tcp.imap">IMAP</option>
-							<option value="tcp.smtp">SMTP</option>
-							<option value="tcp.pops">POP (Secure)</option>
-							<option value="tcp.imaps">IMAP (Secure)</option>
-							<option value="tcp.smtps">SMTP (Secure)</option>
-							<option value="tcp.http.exchange">Microsoft Exchange</option>
-						</optgroup>
-						<optgroup label="Databases">
-							<option value="tcp.mysql">MySQL</option>
-							<option value="tcp.postgres">PostgreSQL</option>
-							<option value="tcp.mssql">Microsoft SQL Server</option>
-						</optgroup>
-					</select>
+				<div class="wizard-input-section" id="bonusReviewPointsDiv">
+					<p>Bonus Review Value</p>
+					<select name="bonusReviewPoints" id="bonusReviewPoints" data-placeholder="0% - Bonus Reviews Not Allowed" class="form-control">
+												<option value="0" selected>0% - Do not allow bonus reviewers</option>
+												<option value="0.5">0.5%</option>
+												<option value="1">1%</option>
+												<option value="1.5">1.5%</option>
+												<option value="2">2%</option>
+												<option value="3">3%</option>
+												<option value="4">4%</option>
+												<option value="5">5%</option>
+          </select>
+				</div>
+
+
+			</div>
+
+			<!--Step 5 BackEval Options-->
+			<div class="wizard-card wizard-card-overlay" data-cardname="backeval">
+				<h3>Back Evaluation Settings</h3>
+				<div class="wizard-input-section" id="backEvalPromptDiv">
+					<p>Back Eval Prompt</p>
+					<input type="text"  class="form-control" id="backEvalPrompt" name="backEvalPrompt" placeholder="If you found the review helpful, what made it useful? If possible, suggest a way to be more helpful next time.">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalRating1Div">
+					<p>Back Eval Rating 1</p>
+					<input type="text"  class="form-control" id="backEvalRating1" name="backEvalRating1" placeholder="1 - Very unhelpful">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalRating2Div">
+					<p>Back Eval Rating 2</p>
+					<input type="text"  class="form-control" id="backEvalRating2" name="backEvalRating2" placeholder="2 - A little less helpful than average">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalRating3Div">
+					<p>Back Eval Rating 3</p>
+					<input type="text"  class="form-control" id="backEvalRating3" name="backEvalRating3" placeholder="3 - Average helpfulness">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalRating4Div">
+					<p>Back Eval Rating 4</p>
+					<input type="text"  class="form-control" id="backEvalRating4" name="backEvalRating4" placeholder="4 - Slightly more helpful than average">
+				</div>
+
+				<div class="wizard-input-section" id="backEvalRating5Div">
+					<p>Back Eval Rating 5</p>
+					<input type="text"  class="form-control" id="backEvalRating5" name="backEvalRating5" placeholder="5 - Much more helpful than average">
+				</div>
+
+			</div>
+
+			<!--Step 6 Grading Options-->
+			<div class="wizard-card wizard-card-overlay" data-cardname="grading">
+				<h3>Grading Options</h3>
+
+				<div class="wizard-input-section" id="gradingStyleDiv">
+					<p>Grading Style</p>
+					<select name="gradingStyle" id="gradingStyle" data-placeholder="Curved" class="form-control">
+												<option value="C" selected>Curved</option>
+												<option value="B">Benchmarked</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section" id="curveMeanDiv">
+					<p>Review Grade Curve: Mean</p>
+					<input type="text"  class="form-control" id="curveMean" name="curveMean" placeholder="85">
+				</div>
+
+				<div class="wizard-input-section" id="stdDevDiv">
+					<p>Review Grade Curve: Standard Deviation</p>
+					<input type="text"  class="form-control" id="stdDev" name="stdDev" placeholder="10.0">
+				</div>
+
+				<div class="wizard-input-section" id="documentWeightDiv">
+					<p>Weights: Document</p>
+					<input type="text"  class="form-control" id="documentWeight" name="documentWeight" placeholder="40">
+				</div>
+
+				<div class="wizard-input-section" id="reviewingWeightDiv">
+					<p>Weights: Reviewing</p>
+					<input type="text"  class="form-control" id="reviewingWeight" name="reviewingWeight" placeholder="40">
+				</div>
+
+				<div class="wizard-input-section" id="taskWeightDiv">
+					<p>Weights: Task</p>
+					<input type="text"  class="form-control" id="taskWeight" name="taskWeight" placeholder="20">
 				</div>
 			</div>
 
-			<div class="wizard-card wizard-card-overlay" data-cardname="location">
-				<h3>Monitoring Location</h3>
+			<!--Step 7 Late Penalties-->
+			<div class="wizard-card wizard-card-overlay" data-cardname="late">
+				<h3>Late Penalties</h3>
 
-				<div class="wizard-input-section">
-					<p>
-						We determined <strong>Chicago</strong> to be
-						the closest location to monitor
-						<strong class="create-server-name"></strong>
-						If you would like to change this, or you think this is
-						incorrect, please select a different
-						monitoring location.
-					</p>
-
-					<select name="location" data-placeholder="Monitor nodes" style="width:350px;" class="chzn-select form-control">
-						<option value=""></option>
-						<optgroup label="North America">
-							<option>Atlanta</option>
-							<option selected>Chicago</option>
-							<option>Dallas</option>
-							<option>Denver</option>
-							<option>Fremont, CA</option>
-							<option>Los Angeles</option>
-							<option>Miami</option>
-							<option>Newark, NJ</option>
-							<option>Phoenix</option>
-							<option>Seattle</option>
-							<option>Washington, DC</option>
-						</optgroup>
-
-						<optgroup label="Europe">
-							<option>Amsterdam, NL</option>
-							<option>Berlin</option>
-							<option>London</option>
-							<option>Milan, Italy</option>
-							<option>Nurnberg, Germany</option>
-							<option>Paris</option>
-							<option>Stockholm</option>
-							<option>Vienna</option>
-						</optgroup>
-
-						<optgroup label="Asia/Africa">
-							<option>Cairo</option>
-							<option>Jakarta</option>
-							<option>Johannesburg</option>
-							<option>Hong Kong</option>
-							<option>Singapore</option>
-							<option>Sydney</option>
-							<option>Tokyo</option>
-						</optgroup>
-
-					</select>
-
+				<div class="wizard-input-section" id="lateSubDocWindow" hidden>
+					<p>Late Document Submission Window</p>
+					<select name="documentGracePeriod" id="documentGracePeriod" data-placeholder="Late Submissions Not Allowed" class="form-control">
+												<option value="0" selected>Late Submissions Not Allowed</option>
+												<option value="1">1 Day</option>
+												<option value="2">2 Days</option>
+												<option value="3">3 Days</option>
+          </select>
 				</div>
+
+				<div class="wizard-input-section" id="lateSubDocPen" hidden>
+					<p>Late Document Submission Penalty</p>
+					<input type="text"  class="form-control" id="lateDocPenalty" name="lateDocPenalty" placeholder="0">
+				</div>
+
+				<div class="wizard-input-section" id="reviewGracePeriodDiv">
+					<p>Late Review Submission Window</p>
+					<select name="reviewGracePeriod" id="reviewGracePeriod" data-placeholder="Late Reviews Not Allowed" class="form-control">
+												<option value="0" selected>Late Reviews Not Allowed</option>
+												<option value="1">1 Day</option>
+												<option value="2">2 Days</option>
+												<option value="3">3 Days</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section" id="lateReviewPenaltyDiv">
+					<p>Late Review Submission Penalty</p>
+					<input type="text"  class="form-control" id="lateReviewPenalty" name="lateReviewPenalty" placeholder="0">
+				</div>
+
 			</div>
 
-			<div class="wizard-card wizard-card-overlay">
-				<h3>Notification Schedule</h3>
+			<!--Advanced Settings-->
+			<div class="wizard-card" data-cardname="advanced">
+				<h3>Advanced Settings</h3>
 
-				<div class="wizard-input-section">
-					<p>
-						Select the notification schedule to be used for outages.
-					</p>
-
-					<select name="notification" class="wizard-ns-select chzn-select form-control" data-placeholder="Notification schedule" style="width:350px;">
-						<option value=""></option>
-						<option>ALIS Production</option>
-						<option>ALIS Development &amp; Staging</option>
-						<option>Panopta Development &amp; Staging</option>
-						<option>Jira</option>
-						<option>QSC Enterprise Production</option>
-						<option>QSC Enterprise Development &amp; Staging</option>
-						<option>Panopta Production</option>
-						<option>Panopta Monitoring Nodes</option>
-						<option>Common</option>
-					</select>
+				<div class="wizard-input-section" id="sendNotificationsDiv">
+					<p>Send Email Notifications</p>
+					<select name="sendNotifications" id="sendNotifications" data-placeholder="Yes" class="form-control">
+												<option value="Y" selected>Yes</option>
+												<option value="N">No</option>
+          </select>
 				</div>
 
-				<div class="wizard-ns-detail hide">
-					Also using <strong>ALIS Production</strong>:
-
-					<ul id="wizard-ns-detail-servers">
-						<li><img src="img/folder.png" />Corporate sites</li>
-						<li><img src="img/folder.png" />dt01.sat.medtelligent.com</li>
-						<li><img src="img/server_new.png" />alisonline.com</li>
-						<li><img src="img/server_new.png" />circa-db04.sat.medtelligent.com</li>
-						<li><img src="img/server_new.png" />circa-services01.sat.medtelligent.com</li>
-						<li><img src="img/server_new.png" />circa-web01.sat.medtelligent.com</li>
-						<li><img src="img/server_new.png" />heartbeat.alisonline.com</li>
-						<li><img src="img/server_new.png" />medtelligent.com</li>
-						<li><img src="img/server_new.png" />dt02.fre.medtelligent.com</li>
-						<li><img src="img/server_new.png" />dev03.lin.medtelligent.com</li>
-					</ul>img				</div>
-			</div>
-
-			<div class="wizard-card">
-				<h3>Agent Setup</h3>
-
-				<div class="wizard-input-section">
-					<p>The <a target="_blank" href="http://www.panopta.com/support/knowledgebase/support-questions/how-do-i-install-the-panopta-monitoring-agent/">Panopta Agent</a> allows
-						you to monitor local resources (disk usage, cpu usage, etc).
-						If you would like to set that up now, please download
-						and follow the <a target="_blank" href="http://www.panopta.com/support/knowledgebase/support-questions/how-do-i-install-the-panopta-monitoring-agent/">install instructions.</a>
-					</p>
-
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Download<span class="caret"></span></button>
-						<ul class="dropdown-menu">
-							<li><a href="#">.rpm</a></li>
-							<li><a href="#">.deb</a></li>
-							<li><a href="#">.tar.gz</a></li>
-						</ul>
-					</div>
+				<div class="wizard-input-section" id="manualReleaseDiv">
+					<p>Hold Grades For Manual Release</p>
+					<select name="manualRelease" id="manualRelease" data-placeholder="No" class="form-control">
+												<option value="N" selected>No</option>
+												<option value="Y">Yes</option>
+          </select>
 				</div>
 
-
-				<div class="wizard-input-section">
-					<p>You will be given a server key after you install the Agent
-						on <strong class="create-server-name"></strong>.
-						If you know your server key now, please enter it
-						below.</p>
-
-					<div class="form-group">
-						<input type="text" class="create-server-agent-key form-control" placeholder="Server key (optional)" data-validate="">
-					</div>
+				<div class="wizard-input-section" id="convertDocsDiv">
+					<p>Convert Student Documents To PDFs</p>
+					<select name="convertDocs" id="convertDocs" data-placeholder="Yes" class="form-control">
+												<option value="Y" selected>Yes</option>
+												<option value="N">No</option>
+          </select>
 				</div>
+
+				<div class="wizard-input-section" id="reviewerManagementDiv">
+					<p>Reviewer Management</p>
+					<select name="reviewerManagement" id="reviewerManagement" data-placeholder="New Random Set of Reviewers For Each Document" class="form-control">
+												<option value="N" selected>New Random Set of Reviewers For Each Document</option>
+												<option value="Y">Keep Same Set of Reviewers Across Drafts</option>
+												<option value="M">Manually Select Reviewers for Each Document</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section"  id="allowedFileTypesDiv">
+					<p>Allowed File Types</p>
+					<input type="text"  class="form-control" id="allowedFileTypes" name="allowedFileTypes" placeholder=".zip .pdf .doc .docx .rtf .xls .xlsx .txt .ppt .pptx .vdx .vsx .vtx .xml .html .a3p">
+				</div>
+
 
 
 				<div class="wizard-error">
@@ -268,22 +347,26 @@
 
 				<div class="wizard-success">
 					<div class="alert alert-success">
-						<span class="create-server-name"></span>Server Created <strong>Successfully.</strong>
+						<span class="create-server-name"></span>Assignment Created <strong>Successfully.</strong>
 					</div>
 
-					<a class="btn btn-default create-another-server">Create another server</a>
+					<a class="btn btn-default create-another-server">Create another Assignment</a>
 					<span style="padding:0 10px">or</span>
 					<a class="btn btn-success im-done">Done</a>
 				</div>
 			</div>
 		</div>
+
+		<!--JQuery Latest-->
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	 	<!-- Bootstrap Core JavaScript  -->
 	 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	 	<!-- Bootstrap Core CSS -->
+		<!--Generic JS UI libraries, HTML 5 Compliant-->
 		<script src="chosen/chosen.jquery.js"></script>
 		<script src="js/prettify.js" type="text/javascript"></script>
+		<!--Wizard Library Javascript-->
 		<script src="../src/bootstrap-wizard.js" type="text/javascript"></script>
+		<!--Static validation scripts specific to this page-->
 		<script src="js/wizardjs.js" type="text/javascript"></script>
 	</body>
 </html>
