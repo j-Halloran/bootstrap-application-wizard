@@ -30,7 +30,7 @@
 		<div class="wizard" id="satellite-wizard" data-title="Create New Assignment">
 
 			<!-- Step 1 Name & description -->
-			<div class="wizard-card" data-cardname="name">
+			<div class="wizard-card" id="nameCard" data-cardname="name">
 				<h3>Name &amp; Description</h3>
 
 				<div class="wizard-input-section" id="labelDiv">
@@ -56,14 +56,13 @@
 			</div>
 
 			<!--Step 2 Type Basic Options-->
-			<div class="wizard-card" data-cardname="type">
+			<div class="wizard-card" id="basicOptionsCard" data-cardname="type">
 				<h3>Assignment Type</h3>
 
 				<div class="wizard-input-section">
 					<p>Assignment Type</p>
 					<select name="assignmentType" id="assignTypeSel" data-placeholder="Select An Assignment Type" class="form-control" data-validate="validateAssignmentType">
-												<option value="N">Select An Assignment Type</option>
-												<option value="R" >Regular/Individual Submission</option>
+												<option value="R" selected>Regular/Individual Submission</option>
                         <option value="G">Group Submission</option>
                         <option value="T">Training</option>
           </select>
@@ -71,9 +70,8 @@
 
 				<div class="wizard-input-section" id="subTypeSelDiv">
 					<p>Submission Type</p>
-					<select name="submissionType" id="subTypeSel"  data-placeholder="Select A Submission Type" class="form-control" data-validate="validateAssignmentType">
-												<option value="N">Select A Submission Type</option>
-												<option value="F">Upload A File</option>
+					<select name="assignmentSubmissionType" id="subTypeSel"  data-placeholder="Select A Submission Type" class="form-control" data-validate="validateAssignmentType">
+												<option value="F" selected>Upload A File</option>
                         <option value="T">Plain Text Online</option>
                         <option value="U">Submit A URL</option>
           </select>
@@ -89,7 +87,7 @@
 
 				<div class="wizard-input-section" id="anonTeacherGradesDiv">
 					<p>Anonymous Teacher Reviews</p>
-					<select name="anonTeacherGrades" id="anonTeacherGrades" data-placeholder="No" class="form-control">
+					<select name="isTeacherReviewAnon" id="anonTeacherGrades" data-placeholder="No" class="form-control">
 											<option value="N" selected>No</option>
 											<option value="Y">Yes</option>
           </select>
@@ -97,7 +95,7 @@
 
 				<div class="wizard-input-section" id="backEvalSelDiv">
 					<p>Back Evaluate Assignment</p>
-					<select name="isBackEvaluated" id="backEvalSel" data-placeholder="Yes" class="form-control">
+					<select name="isBackevaluated" id="backEvalSel" data-placeholder="Yes" class="form-control">
 											<option value="Y" selected>Yes</option>
 											<option value="N">No</option>
           </select>
@@ -130,12 +128,13 @@
 			</div>
 
 			<!--Step 4 Review Options-->
-			<div class="wizard-card wizard-card-overlay" data-cardname="review">
+			<div class="wizard-card wizard-card-overlay" id="reviewCard" data-cardname="review">
 				<h3>Review Settings</h3>
 
+				<input name="reviewHide" id="reviewHide" type="text" hidden>
 				<div class="wizard-input-section" id="numReviewersDiv">
 					<p>Number of Reviewers</p>
-					<select name="numReviewers" id="numReviewers" data-placeholder="3" class="form-control">
+					<select name="numberOfReviewers" id="numReviewers" data-placeholder="3" class="form-control">
 												<option value="1">1</option>
 												<option value="2" >2</option>
                         <option value="3" selected>3</option>
@@ -145,16 +144,24 @@
 				</div>
 
 				<div class="wizard-input-section" id="reviewingStyleDiv" >
+					<p>Is Assignment Self Evaluated</p>
+					<select name="selfEval" id="selfEvalSel" data-placeholder="No" class="form-control">
+												<option value="N" selected>No</option>
+												<option value="Y">Yes</option>
+          </select>
+				</div>
+
+				<div class="wizard-input-section" id="reviewingStyleDiv" >
 					<p>Reviewing Style</p>
 					<select name="reviewingStyle" id="reviewingStyle" data-placeholder="Assigned One At A Time" class="form-control">
-												<option value="S">Assigned One At A Time</option>
+												<option value="S" selected>Assigned One At A Time</option>
 												<option value="P">Assigned All At Once</option>
           </select>
 				</div>
 
 				<div class="wizard-input-section" id="teacherReviewDiv">
 					<p>Instructor's Review Is</p>
-					<select name="teacherReview" id="teacherReview" data-placeholder="Just One in the Set" class="form-control">
+					<select name="teacherGradeOption" id="teacherReview" data-placeholder="Just One in the Set" class="form-control">
 												<option value="1" selected>Just One in the Set</option>
 												<option value="2">Sliding Scale</option>
 												<option value="3">Overrides All Student Reviews</option>
@@ -179,8 +186,8 @@
 			</div>
 
 			<!--Step 5 BackEval Options-->
-			<div class="wizard-card wizard-card-overlay" data-cardname="backeval">
-				<h3>Back Evaluation Settings</h3>
+			<div class="wizard-card wizard-card-overlay"  data-cardname="backeval">
+				<h3 id="backEvalCard">Back Evaluation Settings</h3>
 				<div class="wizard-input-section" id="backEvalPromptDiv">
 					<p>Back Eval Prompt</p>
 					<input type="text"  class="form-control" id="backEvalPrompt" name="backEvalPrompt" placeholder="If you found the review helpful, what made it useful? If possible, suggest a way to be more helpful next time.">
@@ -214,7 +221,7 @@
 			</div>
 
 			<!--Step 6 Grading Options-->
-			<div class="wizard-card wizard-card-overlay" data-cardname="grading">
+			<div class="wizard-card wizard-card-overlay" id="gradingCard" data-cardname="grading">
 				<h3>Grading Options</h3>
 
 				<div class="wizard-input-section" id="gradingStyleDiv">
@@ -227,37 +234,37 @@
 
 				<div class="wizard-input-section" id="curveMeanDiv">
 					<p>Review Grade Curve: Mean</p>
-					<input type="text"  class="form-control" id="curveMean" name="curveMean" placeholder="85">
+					<input type="text"  class="form-control" id="curveMean" name="meanCurve" placeholder="85">
 				</div>
 
 				<div class="wizard-input-section" id="stdDevDiv">
 					<p>Review Grade Curve: Standard Deviation</p>
-					<input type="text"  class="form-control" id="stdDev" name="stdDev" placeholder="10.0">
+					<input type="text"  class="form-control" id="stdDev" name="standardDeviationCurve" placeholder="10.0">
 				</div>
 
 				<div class="wizard-input-section" id="documentWeightDiv">
 					<p>Weights: Document</p>
-					<input type="text"  class="form-control" id="documentWeight" name="documentWeight" placeholder="40">
+					<input type="text"  class="form-control" id="documentWeight" name="writingGradeWeight" placeholder="40">
 				</div>
 
 				<div class="wizard-input-section" id="reviewingWeightDiv">
 					<p>Weights: Reviewing</p>
-					<input type="text"  class="form-control" id="reviewingWeight" name="reviewingWeight" placeholder="40">
+					<input type="text"  class="form-control" id="reviewingWeight" name="accuracyGradeWeight" placeholder="40">
 				</div>
 
 				<div class="wizard-input-section" id="taskWeightDiv">
 					<p>Weights: Task</p>
-					<input type="text"  class="form-control" id="taskWeight" name="taskWeight" placeholder="20">
+					<input type="text"  class="form-control" id="taskWeight" name="taskGradeWeight" placeholder="20">
 				</div>
 			</div>
 
 			<!--Step 7 Late Penalties-->
-			<div class="wizard-card wizard-card-overlay" data-cardname="late">
+			<div class="wizard-card wizard-card-overlay" id="lateCard" data-cardname="late">
 				<h3>Late Penalties</h3>
 
 				<div class="wizard-input-section" id="lateSubDocWindow" hidden>
 					<p>Late Document Submission Window</p>
-					<select name="documentGracePeriod" id="documentGracePeriod" data-placeholder="Late Submissions Not Allowed" class="form-control">
+					<select name="gracePeriodForLatePapers" id="documentGracePeriod" data-placeholder="Late Submissions Not Allowed" class="form-control">
 												<option value="0" selected>Late Submissions Not Allowed</option>
 												<option value="1">1 Day</option>
 												<option value="2">2 Days</option>
@@ -267,12 +274,12 @@
 
 				<div class="wizard-input-section" id="lateSubDocPen" hidden>
 					<p>Late Document Submission Penalty</p>
-					<input type="text"  class="form-control" id="lateDocPenalty" name="lateDocPenalty" placeholder="0">
+					<input type="text"  class="form-control" id="lateDocPenalty" name="penaltyForLatePapers" placeholder="0">
 				</div>
 
 				<div class="wizard-input-section" id="reviewGracePeriodDiv">
 					<p>Late Review Submission Window</p>
-					<select name="reviewGracePeriod" id="reviewGracePeriod" data-placeholder="Late Reviews Not Allowed" class="form-control">
+					<select name="gracePeriodForLateReviews" id="reviewGracePeriod" data-placeholder="Late Reviews Not Allowed" class="form-control">
 												<option value="0" selected>Late Reviews Not Allowed</option>
 												<option value="1">1 Day</option>
 												<option value="2">2 Days</option>
@@ -282,13 +289,13 @@
 
 				<div class="wizard-input-section" id="lateReviewPenaltyDiv">
 					<p>Late Review Submission Penalty</p>
-					<input type="text"  class="form-control" id="lateReviewPenalty" name="lateReviewPenalty" placeholder="0">
+					<input type="text"  class="form-control" id="lateReviewPenalty" name="penaltyForLateReviews" placeholder="0">
 				</div>
 
 			</div>
 
 			<!--Advanced Settings-->
-			<div class="wizard-card" data-cardname="advanced">
+			<div class="wizard-card" id="advancedCard" data-cardname="advanced">
 				<h3>Advanced Settings</h3>
 
 				<div class="wizard-input-section" id="sendNotificationsDiv">
@@ -301,15 +308,23 @@
 
 				<div class="wizard-input-section" id="manualReleaseDiv">
 					<p>Hold Grades For Manual Release</p>
-					<select name="manualRelease" id="manualRelease" data-placeholder="No" class="form-control">
+					<select name="manualGradeRelease" id="manualRelease" data-placeholder="No" class="form-control">
 												<option value="N" selected>No</option>
 												<option value="Y">Yes</option>
           </select>
 				</div>
 
+				<!--<div class="wizard-input-section" id="reviewFormDiv">
+					<p>Allow Review Form Upload</p>
+					<select name="allowFormUpload" id="allowFormUpload" data-placeholder="No" class="form-control">
+												<option value="N" selected>No</option>
+												<option value="Y">Yes</option>
+          </select>
+				</div> -->
+
 				<div class="wizard-input-section" id="convertDocsDiv">
 					<p>Convert Student Documents To PDFs</p>
-					<select name="convertDocs" id="convertDocs" data-placeholder="Yes" class="form-control">
+					<select name="convertToPdf" id="convertDocs" data-placeholder="Yes" class="form-control">
 												<option value="Y" selected>Yes</option>
 												<option value="N">No</option>
           </select>
@@ -326,7 +341,7 @@
 
 				<div class="wizard-input-section"  id="allowedFileTypesDiv">
 					<p>Allowed File Types</p>
-					<input type="text"  class="form-control" id="allowedFileTypes" name="allowedFileTypes" placeholder=".zip .pdf .doc .docx .rtf .xls .xlsx .txt .ppt .pptx .vdx .vsx .vtx .xml .html .a3p">
+					<input type="text"  class="form-control" id="allowedFileTypes" name="allowedFileTypes" value=".zip .pdf .doc .docx .rtf .xls .xlsx .txt .ppt .pptx .vdx .vsx .vtx .xml .html .a3p">
 				</div>
 
 

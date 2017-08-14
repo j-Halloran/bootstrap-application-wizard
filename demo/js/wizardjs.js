@@ -3,28 +3,20 @@ $(document).ready(function() {
   var wizard = $('#satellite-wizard').wizard({
     keyboard : false,
     contentHeight : 700,
-    contentWidth : 800,
+    contentWidth : 700,
     backdrop: 'static'
   });
   wizard.show();
 
   $(".chzn-select").chosen();
 
-  $('#fqdn').on('input', function() {
-    if ($(this).val().length != 0) {
-      $('#ip').val('').attr('disabled', 'disabled');
-      $('#fqdn, #ip').parents('.form-group').removeClass('has-error has-success');
-    } else {
-      $('#ip').val('').removeAttr('disabled');
-    }
-  });
-
-  var pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-  x = 46;
-
   wizard.on('closed', function() {
     wizard.reset();
   });
+
+  wizard.on('incrementCard',function(){
+    console.log("Incrementing");
+  })
 
   wizard.on("reset", function() {
     wizard.modal.find(':input').val('').removeAttr('disabled');
@@ -89,7 +81,7 @@ function validateServerLabel(el) {
 function validateAssignmentType(el){
   var retValue = {};
 
-  if(el.val()!=='N'){
+  if(el.val()!=='N' || el.is(':hidden')){
     retValue.status = true;
   }
   else{
@@ -102,27 +94,40 @@ function validateAssignmentType(el){
 
 //Listener for is teacher graded only
 $('#teacherGradeOnly').change(function(){
+  teacherGradeOnlyToggle();
+});
+
+//teacher grade only toggle logic
+function teacherGradeOnlyToggle(){
   if($('#teacherGradeOnly').val() === 'Y'){
     $('#backEvalSelDiv').hide();
     $('#backEvalSel').val("N");
     $('#reviewDeadlineDiv').hide();
     $('#backEvalDeadlineDiv').hide();
-    $('div.wizard-nav-container > ul > li:nth-child(4)').hide();
-    $('div.wizard-nav-container > ul > li:nth-child(5)').hide();
-    $('div.wizard-nav-container > ul > li:nth-child(6)').hide();
-    $('div.wizard-nav-container > ul > li:nth-child(7)').hide();
+    $('div.wizard-nav-container > ul > li:nth-child(4)').hide(); //hide reviewing link
+    $('div.wizard-nav-container > ul > li:nth-child(5)').hide(); //hide backeval link
+    $('div.wizard-nav-container > ul > li:nth-child(6)').hide(); //hide grading link
+    $('div.wizard-nav-container > ul > li:nth-child(7)').hide(); //hide late period link
+    $("#reviewHide").prop("disabled", true); //disable for review card
+    $("#backEvalPrompt").prop("disabled", true); //disable for back eval card
+    $("#curveMean").prop("disabled", true); //disable for grading card
+    $("#lateDocPenalty").prop("disabled", true); //disable for late card
   }
   else{
     $('#backEvalSelDiv').show();
     $('#backEvalSel').val("Y");
     $('#reviewDeadlineDiv').show();
     $('#backEvalDeadlineDiv').show();
-    $('div.wizard-nav-container > ul > li:nth-child(4)').show();
-    $('div.wizard-nav-container > ul > li:nth-child(5)').show();
-    $('div.wizard-nav-container > ul > li:nth-child(6)').show();
-    $('div.wizard-nav-container > ul > li:nth-child(7)').show();
+    $('div.wizard-nav-container > ul > li:nth-child(4)').show(); //show reviewing link
+    $('div.wizard-nav-container > ul > li:nth-child(5)').show(); //show backeval link
+    $('div.wizard-nav-container > ul > li:nth-child(6)').show(); //show grading link
+    $('div.wizard-nav-container > ul > li:nth-child(7)').show(); //show late period link
+    $("#reviewHide").prop("disabled", false); //enable for review card
+    $("#backEvalPrompt").prop("disabled", false); //enable for back eval card
+    $("#curveMean").prop("disabled", false); //enable for grading card
+    $("#lateDocPenalty").prop("disabled", false); //enable for late card
   }
-});
+}
 
 //Listener for assignment type
 $('#assignTypeSel').change(function(){
@@ -130,6 +135,8 @@ $('#assignTypeSel').change(function(){
     $('#submissionDeadlineDiv').hide();
     $('#teacherGradeOnlyDiv').hide();
     $('#subTypeSelDiv').hide();
+    $('#teacherGradeOnly').val("N");
+    teacherGradeOnlyToggle();
   }
   else{
     $('#submissionDeadlineDiv').show();
@@ -153,10 +160,13 @@ $('#backEvalSel').change(function(){
   if($('#backEvalSel').val() === 'Y'){
     $('#backEvalDeadlineDiv').show();
     $('div.wizard-nav-container > ul > li:nth-child(5)').show();
+    $( "#backEvalPrompt" ).prop( "disabled", false );
   }
   else{
     $('#backEvalDeadlineDiv').hide();
     $('div.wizard-nav-container > ul > li:nth-child(5)').hide();
+    $("#backEvalPrompt").prop( "disabled", true );
+    console.log("asdf");
   }
 });
 

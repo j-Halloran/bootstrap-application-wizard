@@ -149,7 +149,9 @@
         },
 
         isDisabled: function() {
-            return this._disabled;
+            var temp = this.el.find('input').first();
+            return temp.is(':disabled');
+           // return this.el.find('h3').prop('disabled');
         },
 
         alreadyVisited: function() {
